@@ -153,6 +153,7 @@
             Controls.Add(txtAd);
             Name = "Form1";
             Text = "3";
+            FormClosing += Form1_FormClosing;
             ResumeLayout(false);
             PerformLayout();
         }

@@ -1,4 +1,5 @@
-using System.Security.Cryptography;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 
 namespace KisiDefteri
 {
@@ -9,8 +10,21 @@ namespace KisiDefteri
         public Form1()
         {
             InitializeComponent();
-            OrnekVerileriEkle();
+            VerileriYukle();
             Listele();
+        }
+
+        private void VerileriYukle()
+        {
+            try
+            {
+                string json = File.ReadAllText("veri.json");
+                kisiler = JsonSerializer.Deserialize<List<Kisi>>(json)!; // Serilize edilmiþ json tekrar list hale gelir.
+            }
+            catch (Exception)
+            {
+                OrnekVerileriEkle();
+            }
         }
 
         private void OrnekVerileriEkle()
@@ -112,6 +126,18 @@ namespace KisiDefteri
         {
             if (e.KeyCode == Keys.Delete)
                 btnSil.PerformClick();
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            var options = new JsonSerializerOptions()
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                WriteIndented = true
+            };
+
+            string json = JsonSerializer.Serialize(kisiler, options);
+            File.WriteAllText("veri.json", json);
         }
     }
 }
